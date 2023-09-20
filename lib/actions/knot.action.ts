@@ -105,3 +105,39 @@ export async function fetchKnotById(id: string) {
     throw new Error(`Error fetching knot ${error.message}`);
   }
 }
+
+export async function addCommentToKnot(
+  knotId: string,
+  commentText: string,
+  userId: string,
+  path: string
+) {
+  connectToDB();
+
+  try {
+    //adding comment to knot
+    const originalKnot = await Knot.findById(knotId);
+
+    if (!originalKnot) throw new Error("Knot not found");
+
+    //Create a new Knot with the comment text
+    const commentKnot = new Knot({
+      text: commentText,
+      author: userId,
+      parentId: knotId,
+    });
+
+    //Save the new knot
+    const savedCommentKnot = await commentKnot.save();
+
+    // Update the original knot to include the new comment
+    originalKnot.children.push(savedCommentKnot._id);
+
+    // Save the original knot
+    await originalKnot.save();
+
+    revalidatePath(path);
+  } catch (error: any) {
+    throw new Error(`Error adding comment to Knot ${error.message}`);
+  }
+}

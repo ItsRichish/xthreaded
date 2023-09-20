@@ -4,6 +4,7 @@ import KnotCard from "@/components/cards/KnotCard";
 import { fetchUser } from "@/lib/actions/user.action";
 import { redirect } from "next/navigation";
 import { fetchKnotById } from "@/lib/actions/knot.action";
+import Comments from "@/components/forms/Comments";
 
 const page = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -15,7 +16,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   if (!userInfo.onboarded) redirect("/onboarding");
 
   const knot = await fetchKnotById(params.id);
-  console.log(knot);
+  // console.log(knot);
 
   return (
     <section className="relative">
@@ -31,6 +32,33 @@ const page = async ({ params }: { params: { id: string } }) => {
           createdAt={knot.createdAt}
           comments={knot.children}
         />
+      </div>
+
+      <div className="mt-7">
+        <Comments
+          knotId={knot.id}
+          currentUserImg={userInfo.image}
+          currentUserId={JSON.stringify(userInfo._id)}
+        />
+      </div>
+
+      <div className="mt-10">
+        <h2>
+          {knot.children.map((child: any) => (
+            <KnotCard
+              key={child._id}
+              id={child._id}
+              currentUserId={child?.id || ""}
+              parentId={child.parentId}
+              content={knot.text}
+              author={child.author}
+              community={child.community}
+              createdAt={child.createdAt}
+              comments={child.children}
+              isComment
+            />
+          ))}
+        </h2>
       </div>
     </section>
   );
