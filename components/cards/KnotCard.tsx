@@ -35,6 +35,8 @@ const KnotCard = ({
   comments,
   isComment,
 }: Props) => {
+  // console.log(author);
+
   return (
     <article
       className={`flex w-full flex-col rounded-xl  ${

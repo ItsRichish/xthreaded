@@ -14,6 +14,7 @@ const page = async ({ params }: { params: { id: string } }) => {
 
   const userInfo = await fetchUser(user.id);
   if (!userInfo.onboarded) redirect("/onboarding");
+  // console.log(userInfo);
 
   const knot = await fetchKnotById(params.id);
   // console.log(knot);
@@ -48,9 +49,9 @@ const page = async ({ params }: { params: { id: string } }) => {
             <KnotCard
               key={child._id}
               id={child._id}
-              currentUserId={child?.id || ""}
+              currentUserId={user.id}
               parentId={child.parentId}
-              content={knot.text}
+              content={child.text}
               author={child.author}
               community={child.community}
               createdAt={child.createdAt}

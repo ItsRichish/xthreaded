@@ -11,12 +11,10 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { CommentValidation } from "@/lib/validations/knot";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { addCommentToKnot, createKnot } from "@/lib/actions/knot.action";
+import { addCommentToKnot } from "@/lib/actions/knot.action";
 import { Input } from "../ui/input";
 import Image from "next/image";
 
@@ -27,8 +25,9 @@ interface Props {
 }
 
 const Comments = ({ knotId, currentUserImg, currentUserId }: Props) => {
+  console.log(currentUserId);
+
   const pathname = usePathname();
-  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(CommentValidation),
