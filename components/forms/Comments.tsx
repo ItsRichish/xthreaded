@@ -25,7 +25,7 @@ interface Props {
 }
 
 const Comments = ({ knotId, currentUserImg, currentUserId }: Props) => {
-  console.log(currentUserId);
+  // console.log(currentUserId);
 
   const pathname = usePathname();
 

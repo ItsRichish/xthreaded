@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
+import Knot from "../models/knot.model";
 
 interface Params {
   userId: string;
@@ -49,5 +50,30 @@ export async function fetchUser(userId: string) {
     // })
   } catch (e: any) {
     throw new Error(`Failed to create/update user: ${e.message}`);
+  }
+}
+
+export async function fetchUserPosts(userId: string) {
+  try {
+    connectToDB();
+
+    //Fill all knots authored by user with the given userID
+    const knots = await User.findOne({ id: userId }).populate({
+      path: "knots",
+      model: Knot,
+      populate: {
+        path: "children",
+        model: Knot,
+        populate: {
+          path: "author",
+          model: User,
+          select: "name image id",
+        },
+      },
+    });
+
+    return knots;
+  } catch (e: any) {
+    throw new Error(`Failed to fetch user posts: ${e.message}`);
   }
 }
