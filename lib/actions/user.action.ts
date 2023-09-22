@@ -128,3 +128,31 @@ export async function fetchUsers({
     throw new Error(`Failed to fetch users: ${e.message}`);
   }
 }
+
+export async function getActivity(userId: string) {
+  try {
+    connectToDB();
+
+    //find all knots created by the user
+
+    const userKnots = await Knot.find({ author: userId });
+
+    // Collect all the child knot ids (replies) from the children
+    const childKnotIds = userKnots.reduce((acc, userKnot) => {
+      return acc.concat(userKnot.children);
+    }, []);
+
+    const replies = await Knot.find({
+      _id: { $in: childKnotIds },
+      author: { $ne: userId },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "name image _id",
+    });
+
+    return replies;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch activity: ${error.message}`);
+  }
+}
